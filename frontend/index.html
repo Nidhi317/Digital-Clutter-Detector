@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fb">
+  <meta name="api-base-url" content="">
+  <title>Digital Clutter Detector</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#dashboard" aria-label="Digital Clutter Detector dashboard">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h5l2 2H18.5A1.5 1.5 0 0 1 20 7.5v11a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5z"/><path d="M8 12h8M8 15h5"/></svg></span>
+        <span class="brand-copy"><strong>Clutter<span>less</span></strong><small>Digital Clutter Detector</small></span>
+      </a>
+      <div class="nav-label">WORKSPACE</div>
+      <nav class="main-nav" aria-label="Main navigation">
+        <button class="nav-item active" data-view="dashboard"><span class="nav-icon">◫</span>Dashboard</button>
+        <button class="nav-item" data-view="scan"><span class="nav-icon">⌕</span>Scan folder</button>
+        <button class="nav-item" data-view="duplicates"><span class="nav-icon">▤</span>Duplicate files<span class="nav-count" id="nav-duplicate-count">0</span></button>
+        <button class="nav-item" data-view="cleanup"><span class="nav-icon">♧</span>Cleanup<span class="nav-count muted" id="nav-selected-count">0</span></button>
+        <button class="nav-item" data-view="quarantine"><span class="nav-icon">⬡</span>Quarantine<span class="nav-count muted" id="nav-quarantine-count">0</span></button>
+      </nav>
+      <div class="nav-label nav-label-spaced">ACTIVITY</div>
+      <nav class="main-nav" aria-label="Activity navigation">
+        <button class="nav-item" data-view="history"><span class="nav-icon">◷</span>Scan history</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="safe-card"><span class="safe-icon">✓</span><div><strong>Your files stay yours</strong><p>Nothing is removed without your confirmation.</p></div></div>
+        <div class="profile"><span class="avatar">DC</span><div><strong>Local workspace</strong><small>Personal account</small></div><span class="profile-dots">···</span></div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobile-menu" aria-label="Open navigation">☰</button>
+        <div class="breadcrumb"><span>Workspace</span><span class="breadcrumb-divider">/</span><strong id="breadcrumb-current">Dashboard</strong></div>
+        <div class="topbar-actions"><span class="privacy-pill"><span></span> Files stay on your device</span><button class="icon-button" id="help-button" aria-label="Help">?</button></div>
+      </header>
+
+      <div class="content">
+        <section class="view active" id="view-dashboard">
+          <div class="page-heading heading-with-action">
+            <div><p class="eyebrow">YOUR WORKSPACE</p><h1>Good to see you<span class="wave">.</span></h1><p class="page-subtitle">A clearer view of your files starts here.</p></div>
+            <button class="button button-primary" data-go="scan"><span class="button-plus">＋</span> Scan a folder</button>
+          </div>
+          <div class="stat-grid">
+            <article class="stat-card"><div class="stat-top"><span>Total files scanned</span><span class="stat-icon blue">▤</span></div><strong class="stat-value" id="stat-files">—</strong><div class="stat-foot" id="stat-files-foot">Run your first scan to get started</div></article>
+            <article class="stat-card"><div class="stat-top"><span>Duplicate files</span><span class="stat-icon purple">⧉</span></div><strong class="stat-value" id="stat-duplicates">—</strong><div class="stat-foot" id="stat-duplicates-foot">Extra copies found</div></article>
+            <article class="stat-card"><div class="stat-top"><span>Duplicate groups</span><span class="stat-icon amber">▦</span></div><strong class="stat-value" id="stat-groups">—</strong><div class="stat-foot">Files with identical content</div></article>
+            <article class="stat-card"><div class="stat-top"><span>Recoverable space</span><span class="stat-icon green">↗</span></div><strong class="stat-value" id="stat-space">—</strong><div class="stat-foot" id="stat-space-foot">Select copies to see potential savings</div></article>
+          </div>
+          <div class="dashboard-grid">
+            <article class="panel storage-panel">
+              <div class="panel-heading"><div><h2>Storage overview</h2><p>Duplicate space in your latest scan</p></div><span class="panel-menu">···</span></div>
+              <div class="storage-content">
+                <div class="donut-wrap"><div class="donut" id="storage-donut"><div class="donut-center"><strong id="storage-percent">—</strong><span>duplicate<br>space</span></div></div></div>
+                <div class="storage-legend"><div class="legend-line"><span class="legend-dot purple-dot"></span><span>Recoverable</span><strong id="storage-recoverable">—</strong></div><div class="legend-line"><span class="legend-dot gray-dot"></span><span>Other files</span><strong id="storage-other">—</strong></div><div class="legend-note" id="storage-note">Scan a folder to see your storage breakdown.</div></div>
+              </div>
+              <div class="storage-bar"><div id="storage-bar-fill"></div></div><div class="storage-foot"><span>Space represented by scanned files</span><strong id="storage-total">—</strong></div>
+            </article>
+            <article class="panel recent-panel">
+              <div class="panel-heading"><div><h2>Recent scan activity</h2><p>Your latest folder scans</p></div><button class="text-button" data-go="history">View history <span>→</span></button></div>
+              <div id="recent-scans" class="recent-list"></div>
+            </article>
+          </div>
+          <article class="panel quick-panel"><div class="quick-icon">✦</div><div><strong>Ready to find a little breathing room?</strong><p>Scan a permitted folder to find duplicate files. Your originals are protected automatically.</p></div><button class="button button-secondary" data-go="scan">Start a scan <span>→</span></button></article>
+        </section>
+
+        <section class="view" id="view-scan">
+          <div class="page-heading"><p class="eyebrow">GET STARTED</p><h1>Scan a folder<span class="wave">.</span></h1><p class="page-subtitle">Find duplicate files by comparing their content—not just their names.</p></div>
+          <div class="scan-layout">
+            <article class="panel scan-panel">
+              <div class="scan-panel-intro"><span class="large-icon scan-large-icon">⌕</span><div><h2>Choose what to scan</h2><p>Enter the full path of a folder permitted by the Flask server.</p></div></div>
+              <form id="scan-form">
+                <label class="field-label" for="folder-path">Folder path</label>
+                <div class="path-input-wrap"><span class="path-prefix">⌂</span><input id="folder-path" type="text" placeholder="e.g. C:\path\inside\backend\scan_roots" autocomplete="off" required></div>
+                <p class="field-hint">The backend scans folders inside its configured scan directories only. See the backend README for setup.</p>
+                <div class="scan-options"><span class="option-check">✓</span><span>Compare file contents with SHA-256</span><span class="option-check">✓</span><span>Protect one original in each group</span></div>
+                <button class="button button-primary scan-submit" id="scan-submit" type="submit"><span>⌕</span> Scan folder</button>
+              </form>
+              <div class="scan-progress hidden" id="scan-progress" aria-live="polite"><div class="progress-label"><strong id="progress-title">Preparing scan…</strong><span id="progress-percent">0%</span></div><div class="progress-track"><div id="progress-fill"></div></div><p id="progress-detail">Getting files ready</p></div>
+              <div class="scan-message hidden" id="scan-message" role="status"></div>
+              <div class="scan-summary hidden" id="scan-summary"></div>
+            </article>
+            <aside class="scan-aside">
+              <article class="panel how-panel"><span class="side-icon">◎</span><h3>How it works</h3><div class="how-step"><span>01</span><div><strong>Enter a permitted folder path</strong><p>The Flask server validates it against configured scan roots.</p></div></div><div class="how-step"><span>02</span><div><strong>We compare contents</strong><p>SHA-256 fingerprints identify exact matches.</p></div></div><div class="how-step"><span>03</span><div><strong>You decide what stays</strong><p>One original per group is always protected.</p></div></div></article>
+              <div class="privacy-note"><span>♧</span><p><strong>Local processing</strong><br>The Flask server reads local files. No cloud upload is used.</p></div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="view-duplicates">
+          <div class="page-heading heading-with-action"><div><p class="eyebrow">REVIEW YOUR FILES</p><h1>Duplicate files<span class="wave">.</span></h1><p class="page-subtitle">Review identical copies. One original in each group is protected.</p></div><button class="button button-primary" data-go="cleanup">Review cleanup <span>→</span></button></div>
+          <div class="filter-panel panel">
+            <div class="search-wrap"><span>⌕</span><input type="search" id="duplicate-search" placeholder="Search by filename…" aria-label="Search duplicate files"></div>
+            <div class="filter-chips" id="category-filters" aria-label="Filter by file type"><button class="filter-chip active" data-category="all">All files</button><button class="filter-chip" data-category="images">Images</button><button class="filter-chip" data-category="documents">Documents</button><button class="filter-chip" data-category="videos">Videos</button><button class="filter-chip" data-category="audio">Audio</button><button class="filter-chip" data-category="other">Other</button></div>
+            <div class="result-count" id="duplicate-result-count">0 groups</div>
+          </div>
+          <div id="duplicate-list" class="duplicate-list"></div>
+        </section>
+
+        <section class="view" id="view-cleanup">
+          <div class="page-heading"><p class="eyebrow">SAFE CLEANUP</p><h1>Ready when you are<span class="wave">.</span></h1><p class="page-subtitle">Review your selections before moving them to quarantine.</p></div>
+          <div class="cleanup-layout">
+            <article class="panel cleanup-files-panel"><div class="panel-heading"><div><h2>Selected files</h2><p id="cleanup-count-label">No files selected</p></div><button class="text-button" id="clear-selection">Clear selection</button></div><div id="cleanup-file-list"></div></article>
+            <aside class="panel cleanup-summary-panel"><span class="summary-icon">↗</span><h2>Space to recover</h2><strong id="cleanup-total-space">0 B</strong><p id="cleanup-explanation">Selected files will be moved to quarantine. You can restore them later.</p><div class="summary-divider"></div><div class="summary-row"><span>Files selected</span><strong id="cleanup-file-count">0</strong></div><button class="button button-primary full-button" id="cleanup-button" disabled>Move to quarantine <span>→</span></button><div class="safe-caption"><span>♧</span> Nothing is permanently deleted.</div></aside>
+          </div>
+        </section>
+
+        <section class="view" id="view-quarantine">
+          <div class="page-heading"><p class="eyebrow">YOUR SAFETY NET</p><h1>Quarantine<span class="wave">.</span></h1><p class="page-subtitle">Files moved here can be restored to their original location.</p></div>
+          <div class="panel table-panel"><div class="panel-heading"><div><h2>Quarantined files</h2><p id="quarantine-description">No files in quarantine</p></div><span class="quarantine-counter" id="quarantine-counter">0 files</span></div><div class="table-scroll"><table><thead><tr><th>FILE</th><th>ORIGINAL LOCATION</th><th>QUARANTINE LOCATION</th><th>STATUS</th><th></th></tr></thead><tbody id="quarantine-table-body"></tbody></table></div><div id="quarantine-empty" class="empty-state compact-empty"><span class="empty-icon">⬡</span><h3>Your quarantine is clear</h3><p>Files you move during cleanup will appear here.</p></div></div>
+        </section>
+
+        <section class="view" id="view-history">
+          <div class="page-heading"><p class="eyebrow">YOUR ACTIVITY</p><h1>Scan history<span class="wave">.</span></h1><p class="page-subtitle">A record of folders you've checked for duplicates.</p></div>
+          <div class="panel table-panel"><div class="panel-heading"><div><h2>Past scans</h2><p>Scan records and results are loaded from SQLite.</p></div></div><div class="table-scroll"><table><thead><tr><th>DATE</th><th>FOLDER</th><th>FILES SCANNED</th><th>DUPLICATE FILES</th><th>RECOVERABLE</th><th></th></tr></thead><tbody id="history-table-body"></tbody></table></div><div id="history-empty" class="empty-state compact-empty"><span class="empty-icon">◷</span><h3>No scans yet</h3><p>When you scan a folder, the results will show up here.</p><button class="button button-secondary" data-go="scan">Scan a folder</button></div></div>
+        </section>
+
+        <footer class="footer"><span>Clutterless <span class="footer-dot">·</span> A calmer way to manage your files</span><span>Built for your privacy</span></footer>
+      </div>
+    </main>
+  </div>
+  <div class="mobile-scrim" id="mobile-scrim"></div>
+  <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <dialog class="confirm-dialog" id="confirm-dialog">
+    <div class="dialog-icon">♧</div><h2>Move files to quarantine?</h2><p id="confirm-description">Selected files will be moved to quarantine. You can restore them later.</p><div class="dialog-actions"><button class="button button-outline" id="cancel-cleanup">Keep reviewing</button><button class="button button-primary" id="confirm-cleanup">Move to quarantine</button></div>
+  </dialog>
+  <script src="js/app.js"></script>
+</body>
+</html>
